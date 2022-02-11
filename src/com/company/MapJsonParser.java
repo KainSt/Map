@@ -14,24 +14,34 @@ import java.util.Map;
 
 public class MapJsonParser {
     public static void main(String[] args){
-        List<String> stationList = new LinkedList<>();
+        Map<String, String> stationsList = new LinkedHashMap<>();
         Map<String, String> linesNameList = new LinkedHashMap<>();
 
         try{
             Document doc = Jsoup.connect("https://www.moscowmap.ru/metro.html#lines").maxBodySize(0).get();
-            Elements metroTable = doc.select("#metrodata");
-            Elements lines = metroTable.select("span[data-line]");
-            Elements station = metroTable.select("a[data-metrost]");
+            Elements lines = doc.select("span[data-line]");
+            Elements stations = doc.select("div[data-line]");
 
 
             lines.forEach(element -> linesNameList.put(element.attr("data-line") , element.text()));
-            station.forEach(element -> stationList.add(element.text()));
+            stations.forEach(element -> {
+                String allInString = element.text();
+                String atrr = element.attr("data-line");
+                String [] listSt = allInString.split("\\s"+"[0-9]{1,2}"+"\\."+"\\s");
+                listSt[0]=listSt[0].substring(3);
+                System.out.println();
+                for (String station: listSt){
+                    stationsList.put(station, atrr);
+                }
+
+            });
             System.out.println();
         }
         catch (IOException exception){
             exception.getStackTrace();
         }
-        System.out.println();
+        System.out.println("Json parsing");
+
 
     }
 }
