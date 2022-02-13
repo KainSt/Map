@@ -9,13 +9,13 @@ import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class MapJsonParser {
     public static void main(String[] args){
-        Map<String, String[]> stationsList = new LinkedHashMap<>();
-        Map<String, String> linesNameList = new LinkedHashMap<>();
+        Map<String, String[]> stationsList = new TreeMap<>();
+        Map<String, String> linesNameList = new TreeMap<>();
 
         try{
             Document doc = Jsoup.connect("https://www.moscowmap.ru/metro.html#lines").maxBodySize(0).get();
@@ -27,12 +27,10 @@ public class MapJsonParser {
             stations.forEach(element -> {
                 String [] listSt = element.text().split("\\s"+"[0-9]{1,2}"+"\\."+"\\s");
                 listSt[0]=listSt[0].substring(3);
-                System.out.println();
                 stationsList.put(element.attr("data-line"),listSt);
 
 
             });
-            System.out.println();
         }
         catch (IOException exception){
             exception.getStackTrace();
