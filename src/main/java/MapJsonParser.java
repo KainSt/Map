@@ -1,9 +1,14 @@
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -33,8 +38,29 @@ public class MapJsonParser {
             exception.getStackTrace();
         }
         System.out.println("Json parsing");
-        
+        JSONObject mainJSON = new JSONObject();
+        JSONObject stationsStructureJSON = new JSONObject();
+        JSONObject linesNameListJSON = new JSONObject();
+        for (Map.Entry<String, String> entry : linesNameList.entrySet()) {
+            linesNameListJSON.put(entry.getKey(),entry.getValue());
+        }
 
+        for (Map.Entry<String, String[]> entry : stationsList.entrySet()) {
+            JSONArray arrayStation = new JSONArray();
+            for( String s:entry.getValue()){
+                arrayStation.add(s);
+            }
 
+            stationsStructureJSON.put(entry.getKey(), arrayStation);
+        }
+        mainJSON.put("linesName",linesNameListJSON);
+        mainJSON.put("stationsStructure",stationsStructureJSON);
+
+        System.out.println("Json object done");
+        try {
+            Files.write(Paths.get("data/lines.json"), mainJSON.toString().getBytes());
+        }catch (IOException ex){
+            ex.getStackTrace();
+        }
     }
 }
